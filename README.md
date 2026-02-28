@@ -36,7 +36,7 @@ Một hệ thống lab giả lập hoàn chỉnh dựa trên Docker, cho phép m
 
 ## 📂 Cấu trúc dự án
 
-```text
+```text 
 brute-force-defender/
 ├── docker-compose.yml       # File điều phối trung tâm
 ├── README.md                # Tài liệu hướng dẫn
@@ -52,38 +52,43 @@ brute-force-defender/
 └── attacker-bot/            # Module giả lập tấn công (Red Team)
     ├── Dockerfile
     └── attack.sh            # Script spam request liên tục
-## 🛠️ Yêu cầu hệ thống
+
+---
+---
+
+#
+🛠️ Yêu cầu hệ thống## 
 Để chạy được lab này, máy của bạn cần cài đặt sẵn:
 
 Docker
 
 Docker Compose
 
-## 🚀 Hướng dẫn sử dụng
-
-
+🚀 Hướng dẫn sử dụng
 Bước 1: Clone kho lưu trữ
+Bash
 git clone [https://github.com/your-username/brute-force-defender.git](https://github.com/your-username/brute-force-defender.git)
 cd brute-force-defender
-
-
-
 Bước 2: Khởi động hệ thống
 Sử dụng Docker Compose để build và chạy toàn bộ các container cùng lúc:
+
+Bash
 docker-compose up --build
-
-
 Bước 3: Quan sát quá trình (Logs)
-
 Ngay khi các container khởi động, bạn sẽ thấy trên terminal:
--attacker-bot bắt đầu "dội bom" request vào Nginx.
--security-watccer phân tích log và in ra thông báo phát hiện tấn công.
--security-watcher thêm IP của bot vào danh sách đen và reload Nginx.
--attacker-bot bắt đầu nhận mã lỗi 403 Forbidden thay vì 200 OK.
 
+attacker-bot bắt đầu "dội bom" request vào Nginx.
+
+security-watcher phân tích log và in ra thông báo phát hiện tấn công.
+
+security-watcher thêm IP của bot vào danh sách đen và reload Nginx.
+
+attacker-bot bắt đầu nhận mã lỗi 403 Forbidden thay vì 200 OK.
 
 Bước 4: Dọn dẹp
 Sau khi test xong, bạn có thể tắt và xóa các container bằng lệnh:
+
+Bash
 docker-compose down
 ⚠️ Cảnh báo
 LƯU Ý: Hệ thống này được tạo ra HOÀN TOÀN VÌ MỤC ĐÍCH GIÁO DỤC (EDUCATIONAL PURPOSES ONLY). Vui lòng không sử dụng các script tấn công (attack.sh) lên các hệ thống thực tế hoặc các máy chủ mà bạn không có quyền sở hữu/được phép kiểm thử. Tác giả không chịu trách nhiệm cho bất kỳ hành vi lạm dụng công cụ nào vi phạm pháp luật.
