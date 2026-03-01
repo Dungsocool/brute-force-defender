@@ -54,7 +54,7 @@ curl -fsSL https://get.docker.com | sudo sh
 sudo usermod -aG docker $USER
 newgrp docker
 
-4) git clone [https://github.com/Dungsocool/brute-force-defender.git]
+4) git clone https://github.com/Dungsocool/brute-force-defender.git
 5) cd brute-force-defender/
 
 6) sudo nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
