@@ -1,131 +1,122 @@
 # 🛡️ Brute-Force Defender Lab
 
-Một hệ thống lab giả lập hoàn chỉnh dựa trên Docker, cho phép mô phỏng các cuộc tấn công Brute-Force/DDoS quy mô nhỏ và tự động phát hiện, ngăn chặn IP của kẻ tấn công theo thời gian thực.
+Một hệ thống thực hành (Lab) tự động hóa quy trình giám sát, phát hiện và ngăn chặn các cuộc tấn công Brute Force vào Web Server thông qua phân tích Log thời gian thực (Real-time Log Analysis).
 
 ---
 
-## 📄 Mục lục
-
-* [1. Giới thiệu Dự án](#-1-giới-thiệu-dự-án)
-* [2. Kiến trúc Hệ thống (Phần 2)](#-2-kiến-trúc-hệ-thống-phần-2)
-* [3. Cơ chế hoạt động](#-3-cơ-chế-hoạt-động)
-* [4. Cấu trúc dự án](#-4-cấu-trúc-dự-án)
-* [5. Hướng dẫn Triển khai (Phần 1)](#-5-hướng-dẫn-triển-khai-phần-1)
-* [6. Hình ảnh Demo](#-6-hình-ảnh-demo)
+## 📑 Mục lục
+- [Giới thiệu](#-giới-thiệu)
+- [Kiến trúc Hệ thống](#-kiến-trúc-hệ-thống)
+- [Cấu trúc dự án](#-cấu-trúc-dự-án)
+- [Hướng dẫn Triển khai](#-hướng-dẫn-triển-khai)
+- [Hình ảnh Demo](#-hình-ảnh-demo)
 
 ---
 
-## 💡 1. Giới thiệu Dự án
+## 💡 Giới thiệu
 
-**Brute-Force Defender** là một bài lab an toàn thông tin được thiết kế để giúp bạn hiểu rõ cách thức một hệ thống phát hiện và phản hồi lại các lưu lượng truy cập bất thường. Dự án bao gồm 3 thành phần chính:
+Dự án này là một mô hình giả lập thu nhỏ của hệ thống IPS (Intrusion Prevention System) được đóng gói hoàn toàn bằng Docker. Hệ thống bao gồm 3 thành phần cốt lõi:
 
-1. **Nginx Web Server**: Mục tiêu bị tấn công.
-2. **Attacker Bot**: Kịch bản giả lập tấn công liên tục.
-3. **Security Watcher**: Hệ thống phòng ngự chủ động (Blue Team) bằng Python.
-
----
-
-## 🏗️ 2. Kiến trúc Hệ thống (Phần 2)
-
-**Vấn đề chọn giải quyết là gì?**
-Các máy chủ web thường xuyên phải đối mặt với các cuộc tấn công dò mật khẩu (Brute-force) hoặc rải request liên tục (DDoS Layer 7). Thay vì phụ thuộc vào các giải pháp Tường lửa (WAF) đắt tiền, dự án này xây dựng cơ chế phòng vệ chủ động ngay tại Web Server.
-
-**Tại sao chọn tech stack này?**
-* **Docker & Docker Compose:** Đóng gói hoàn hảo môi trường, giúp triển khai cực kỳ nhanh chóng và không bị xung đột.
-* **Nginx:** Thao tác chặn IP trực tiếp ở tầng Nginx mang lại hiệu năng cao, giảm tải cho hệ thống phía sau.
-* **Python:** Ngôn ngữ tối ưu để đọc, phân tích file log liên tục (real-time) và ra lệnh tự động cho hệ điều hành.
+1. **Nginx Server (Mục tiêu):** Đóng vai trò là Web Server đang vận hành, ghi nhận mọi truy cập vào file `access.log` và được cấu hình sẵn các "bẫy" (Honeypot) tại các đường dẫn nhạy cảm.
+2. **Attacker Bot (Kẻ tấn công):** Một script tự động hóa liên tục bắn phá (spam requests) vào Web Server để giả lập hành vi rà quét thư mục và Brute Force.
+3. **Security Watcher (Hệ thống phòng thủ):** "Bộ não" bằng Python hoạt động độc lập, liên tục đọc log của Nginx. Khi phát hiện IP có hành vi khả nghi vượt ngưỡng cho phép, nó tự động cập nhật danh sách đen, ép Nginx chặn IP đó và ngay lập tức gửi cảnh báo về điện thoại qua Telegram.
 
 ---
 
-## ⚙️ 3. Cơ chế hoạt động
+## 🏗️ Kiến trúc Hệ thống
 
-Luồng hoạt động chính (Workflow) diễn ra theo vòng lặp tự động khép kín:
+### 1. Vấn đề giải quyết là gì?
+Các hệ thống Web luôn phải đối mặt với các luồng traffic rác hoặc bot tự động quét lỗ hổng liên tục. Việc chặn thủ công là bất khả thi. Dự án này giải quyết bài toán tự động hóa quy trình **Detect & Respond** (Phát hiện & Phản hồi) với độ trễ chỉ tính bằng mili-giây, giúp bảo vệ tài nguyên máy chủ.
 
-1. `attacker-bot` liên tục gửi các request (`curl`) đến `nginx-server`.
-2. `nginx-server` ghi nhận lại toàn bộ lịch sử truy cập vào file `access.log`.
-3. `security-watcher` liên tục theo dõi (tail) file log này. Nếu phát hiện một IP gửi quá số lượng request cho phép trong một khoảng thời gian ngắn:
-   * Ghi IP đó vào file `block_ips.conf`.
-   * Ra lệnh reload lại cấu hình Nginx.
-4. Kể từ lúc đó, Nginx sẽ trả về lỗi `403 Forbidden` cho mọi request từ IP của kẻ tấn công.
+### 2. Tại sao chọn Docker, Nginx và Python?
+* **Docker:** Đảm bảo tính cô lập, dễ dàng tái tạo môi trường (reproducible) và triển khai nhanh chóng (Deploy anywhere) mà không lo xung đột thư viện trên máy host.
+* **Nginx:** Nhẹ, hiệu năng cao, hỗ trợ cấu hình Access Control List (ACL) linh hoạt thông qua lệnh `deny`.
+* **Python:** Cung cấp các cấu trúc dữ liệu tối ưu (như `collections.deque` cho Sliding Window) giúp xử lý file log dung lượng lớn theo thời gian thực mà không bị quá tải RAM, đồng thời hệ sinh thái thư viện phong phú giúp gọi API Telegram và giao tiếp với Docker Socket cực kỳ dễ dàng.
+
+### 3. Luồng hoạt động chính (Workflow)
+1. **Attacker Bot** gửi request lỗi (HTTP 403/404) liên tục vào **Nginx Server**.
+2. **Nginx** ghi lại lịch sử truy cập (kèm IP) vào file `access.log`.
+3. **Security Watcher** đọc luồng dữ liệu mới từ log (Tail -f).
+4. Nếu 1 IP vượt ngưỡng (VD: 10 lỗi trong 60 giây), **Security Watcher** ghi IP đó vào file `block_ips.conf`.
+5. **Security Watcher** gọi API qua Docker Socket để ra lệnh Nginx reload lại cấu hình. Nginx chính thức "cấm cửa" IP.
+6. **Security Watcher** gửi tín hiệu cảnh báo chứa IP bị chặn đến Telegram của quản trị viên.
 
 ---
 
-## 📁 4. Cấu trúc dự án
+## 📂 Cấu trúc dự án
+
+Dự án được phân chia rõ ràng theo nguyên tắc Microservices:
 
 ```text
 brute-force-defender/
-├── docker-compose.yml       # File điều phối trung tâm
-├── README.md                # Tài liệu báo cáo dự án
-├── VIBE_CODING.md           # Nhật ký phát triển cùng AI
-├── nginx-server/            # Web Server Target
-│   ├── Dockerfile           
-│   └── nginx.conf           
-├── security-watcher/        # Hệ thống phòng ngự (Python)
-│   ├── watcher.py           
-│   └── requirements.txt     
-├── shared_config/           # Cấu hình dùng chung
-│   └── block_ips.conf       # Danh sách đen (Blacklist IP)
-├── shared_logs/             # Log dùng chung
-│   ├── access.log           
-│   └── error.log            
-└── attacker-bot/            # Module giả lập tấn công
-    ├── Dockerfile
-    └── attack.sh
+├── docker-compose.yml              # File điều phối hạ tầng trung tâm
+├── README.md                       # Tài liệu dự án
+├── .env                            # Chứa biến môi trường (Telegram Token)
+│
+├── nginx-server/                   # Component Web Server
+│   ├── Dockerfile
+│   └── nginx.conf                  # Cấu hình Nginx gốc
+│
+├── security-watcher/               # Component Hệ thống phòng thủ
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── watcher.py                  # Core logic xử lý log và chặn IP
+│
+├── attacker-bot/                   # Component Giả lập tấn công
+│   ├── Dockerfile
+│   └── attack.sh                   # Script bắn request liên tục
+│
+├── shared_logs/                    # Volume chia sẻ file access.log
+└── shared_config/
+    └── block_ips.conf              # Volume chia sẻ danh sách đen (ACL)
+```
 
-## **🚀 5. Hướng dẫn Triển khai (Phần 1)**
+
+
+## 🚀 Hướng dẫn Triển khai
 Yêu cầu hệ thống
+Hệ điều hành: Ubuntu / Linux Distribution.
 
-Hệ điều hành: Ubuntu / Linux
+Đã cài đặt Docker và Docker Compose.
 
-Công cụ: Docker, Docker Compose
-
-Bước 1: Tải mã nguồn về máy (Clone)
+Bước 1: Clone mã nguồn
+Tải toàn bộ dự án về máy trạm của bạn:
 
 Bash
-git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
+git clone <đường-dẫn-repo-của-bạn>
 cd brute-force-defender
-Bước 2: Khởi chạy hệ thống phòng ngự (Run/Deploy)
+Bước 2: Cấu hình Telegram
+Hệ thống cần thông tin Bot Telegram để gửi cảnh báo. Mở file .env bằng trình chỉnh sửa nano:
+
+Bash
+nano .env
+Thay thế các giá trị mặc định bằng thông tin thật của bạn:
+
+Code snippet
+TELEGRAM_TOKEN=123456789:ABCDefghIJKLmnopQRSTuvwxyz
+TELEGRAM_CHAT_ID=-1001234567890
+(Nhấn Ctrl+O -> Enter để lưu, sau đó Ctrl+X để thoát nano).
+
+Bước 3: Khởi chạy hệ thống
+Sử dụng Docker Compose để build và chạy toàn bộ 3 dịch vụ cùng lúc. Quá trình này sẽ tự động tải các gói phụ thuộc và thiết lập mạng:
 
 Bash
 sudo docker-compose up --build
-(Hệ thống sẽ tự động chạy Nginx, kích hoạt Python Watcher và khởi động Bot tấn công)
+Lưu ý: Giữ nguyên Terminal để theo dõi log trực tiếp. Hệ thống phòng thủ sẽ bắt đầu đếm lỗi, khi đạt ngưỡng, bạn sẽ thấy log báo chặn IP và tin nhắn Telegram sẽ lập tức báo về điện thoại.
 
-Bước 3: Dọn dẹp môi trường sau khi test (Reset)
-Để đưa hệ thống về trạng thái ban đầu (xóa danh sách IP đã chặn) nhằm test lại từ đầu:
+Bước 4: Dọn dẹp & Reset môi trường
+Sau khi test xong, mở một Terminal mới (hoặc nhấn Ctrl+C ở Terminal cũ) và gõ lệnh sau để tắt các container một cách an toàn:
 
 Bash
 sudo docker-compose down
+Để dọn dẹp danh sách đen (xóa các IP đã bị block để lần sau test lại từ đầu), chạy lệnh sau để làm rỗng file cấu hình:
+
+Bash
 sudo sh -c 'echo -n > shared_config/block_ips.conf'
-## **📸 6. Hình ảnh Demo**
-Dưới đây là minh chứng hệ thống hoạt động thực tế:
 
-1. Log cho thấy Bot bắt đầu tấn công và bị phát hiện:
-(Chèn ảnh 1 vào đây)
+## 📸 Hình ảnh Demo
+(Chèn hình ảnh Terminal lúc Bot đang tấn công và Nginx đang ghi log)
 
-2. Kẻ tấn công nhận mã lỗi 403 Forbidden (DA BI BLOCK):
-(Chèn ảnh 2 vào đây)
+(Chèn hình ảnh Terminal hiển thị Security Watcher phát hiện và ra lệnh Block)
 
-
----
-
-### Hướng dẫn cách đưa ảnh vào phần "Hình ảnh Demo" (Mục số 6):
-
-Để ảnh hiện lên README, bạn làm theo 3 bước siêu đơn giản sau ngay trên trình duyệt web GitHub của bạn:
-
-**Bước 1: Tải ảnh lên GitHub**
-1. Ở trang chủ Repo của bạn, bấm nút **"Add file"** (ngay cạnh nút màu xanh Code) -> Chọn **"Upload files"**.
-2. Kéo thả các ảnh bạn đã chụp màn hình terminal (ảnh lúc IP bị báo 403) vào đó.
-3. Bấm **"Commit changes"** màu xanh lá ở dưới cùng.
-
-**Bước 2: Lấy Link ảnh**
-1. Click vào file ảnh bạn vừa up lên (ví dụ: `loi_403.png`).
-2. Nhấp chuột phải vào chính tấm ảnh đó -> Chọn **"Copy image address"** (Sao chép địa chỉ hình ảnh).
-
-**Bước 3: Dán vào README**
-Mở lại file `README.md` lên để Edit, tìm đến Mục số 6 ở dưới cùng và thay thế dòng chữ `*(Chèn ảnh...)*` bằng cú pháp sau:
-`![Mô tả ảnh](Dán_cái_link_vừa_copy_vào_đây)`
-
-**Ví dụ thực tế:**
-`![Hệ thống báo lỗi 403](https://github.com/Dungsocool/brute-force-defender/raw/main/loi_403.png)`
-
-Bạn dán thử nội dung mới này lên GitHub xem cấu trúc nhìn đã "đã mắt" chưa nhé? Nếu cần
+(Chèn hình ảnh chụp màn hình tin nhắn cảnh báo gửi về điện thoại qua Telegram)
