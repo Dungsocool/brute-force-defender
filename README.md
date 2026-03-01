@@ -82,4 +82,5 @@ sudo sh -c 'echo -n > shared_config/block_ips.conf'
 
 <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/0daed469-7f36-41a1-ae9c-bcea95cd9111" />
 
-
+## Video Demo
+**[Click vào đây để xem Video Demo Hệ thống Brute-Force Defender] https://docs.google.com/videos/d/16h24zvL3RcVapeHyRRKZB_j-Smf_H2CvwfsqIerkcCg/edit?usp=sharing**
