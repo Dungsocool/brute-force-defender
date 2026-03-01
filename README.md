@@ -44,11 +44,13 @@ brute-force-defender/
 Dưới đây là các lệnh triển khai nhanh gọn nhất. Bạn chỉ cần chạy lần lượt:
 
 1) git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
-2) cd brute-force-defender/
-3) nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
-4) https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong!
-                                                                          ( "Ping" thử Telegram    {"ok":true, "result":{...}}   là thành công )
-5) sudo docker-compose up --build
+2) sudo usermod -aG docker $USER
+3) newgrp docker
+4) cd brute-force-defender/
+5) sudo nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
+6) curl -s "https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong!"
+        ( "Ping" thử Telegram    {"ok":true, "result":{...}}   là thành công )
+8) sudo docker-compose up --build
 
 🧹 Dọn dẹp hệ thống (Reset)
 Để tắt hệ thống và xóa sạch danh sách IP đã bị chặn (chuẩn bị cho lần test tiếp theo), hãy chạy 2 lệnh sau:
@@ -65,5 +67,6 @@ sudo sh -c 'echo -n > shared_config/block_ips.conf'
 
 <img width="1600" height="861" alt="1" src="https://github.com/user-attachments/assets/17428dc2-b4c3-44ed-ba1e-0e46b004838b" />
 
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/0daed469-7f36-41a1-ae9c-bcea95cd9111" />
 
 
