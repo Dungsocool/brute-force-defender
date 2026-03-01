@@ -46,7 +46,8 @@ Dưới đây là các lệnh triển khai nhanh gọn nhất. Bạn chỉ cần
 1) git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
 2) cd brute-force-defender/
 3) nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
-4) https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong! ( "Ping" thử Telegram    {"ok":true, "result":{...}}   là thành công )
+4) https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong!
+                                                                          ( "Ping" thử Telegram    {"ok":true, "result":{...}}   là thành công )
 5) sudo docker-compose up --build
 
 🧹 Dọn dẹp hệ thống (Reset)
