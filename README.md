@@ -53,10 +53,8 @@ curl -fsSL https://get.docker.com | sudo sh
 # 3. Phân quyền để chạy Docker không cần gõ sudo liên tục
 sudo usermod -aG docker $USER
 newgrp docker
-newgrp docker
 
-4) git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
-
+4) git clone [https://github.com/Dungsocool/brute-force-defender.git]
 5) cd brute-force-defender/
 
 6) sudo nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
@@ -64,7 +62,7 @@ newgrp docker
 7) curl -s "https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong!"
         ( "Ping" thử Telegram    {"ok":true, "result":{...}}   là thành công )
 
-8) sudo docker-compose up --build
+8) sudo docker compose down && docker compose up --build
 
 🧹 Dọn dẹp hệ thống (Reset)
 Để tắt hệ thống và xóa sạch danh sách IP đã bị chặn (chuẩn bị cho lần test tiếp theo), hãy chạy 2 lệnh sau:
