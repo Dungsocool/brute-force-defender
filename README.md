@@ -50,6 +50,7 @@ Bash
 
 🧹 Dọn dẹp hệ thống (Reset)
 Để tắt hệ thống và xóa sạch danh sách IP đã bị chặn (chuẩn bị cho lần test tiếp theo), hãy chạy 2 lệnh sau:
+
 Bash
 sudo docker-compose down
 sudo sh -c 'echo -n > shared_config/block_ips.conf'
