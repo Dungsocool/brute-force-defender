@@ -55,5 +55,11 @@ sudo docker-compose down
 sudo sh -c 'echo -n > shared_config/block_ips.conf'
 
 ## 📸 Hình ảnh Demo
+<img width="1613" height="545" alt="START" src="https://github.com/user-attachments/assets/0e488fc5-a659-4858-beb8-9cb1a7c6395b" />
 
----
+<img width="1323" height="640" alt="gui request" src="https://github.com/user-attachments/assets/cb69633a-4412-4ab3-b54f-90b54717b179" />
+
+<img width="1600" height="861" alt="1" src="https://github.com/user-attachments/assets/17428dc2-b4c3-44ed-ba1e-0e46b004838b" />
+
+
+
