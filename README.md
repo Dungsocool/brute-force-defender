@@ -41,15 +41,29 @@ brute-force-defender/
 
 ## 🚀 Hướng dẫn Cài đặt & Sử dụng
 
-Dưới đây là các lệnh triển khai nhanh gọn nhất. Bạn chỉ cần chạy lần lượt:
+Để chạy được hệ thống, máy ảo của bạn cần có Git và Docker. Thay vì cài đặt thủ công phức tạp, hãy chạy lần lượt các lệnh tự động sau:
 
-1) git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
-2) sudo usermod -aG docker $USER
-3) newgrp docker
-4) cd brute-force-defender/
-5) sudo nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
-6) curl -s "https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong!"
+```bash
+# 1. Cập nhật hệ thống và cài đặt Git, Curl
+sudo apt-get update && sudo apt-get install -y git curl
+
+# 2. Cài đặt Docker & Docker Compose tự động bằng Official Script
+curl -fsSL https://get.docker.com | sudo sh
+
+# 3. Phân quyền để chạy Docker không cần gõ sudo liên tục
+sudo usermod -aG docker $USER
+newgrp docker
+newgrp docker
+
+4) git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
+
+5) cd brute-force-defender/
+
+6) sudo nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
+
+7) curl -s "https://api.telegram.org/bot<TOKEN_CUA_BAN>/sendMessage?chat_id=<ID_CUA_BAN>&text=Test_ket_noi_thanh_cong!"
         ( "Ping" thử Telegram    {"ok":true, "result":{...}}   là thành công )
+
 8) sudo docker-compose up --build
 
 🧹 Dọn dẹp hệ thống (Reset)
@@ -57,8 +71,9 @@ Dưới đây là các lệnh triển khai nhanh gọn nhất. Bạn chỉ cần
 
 sudo docker-compose down
 
-
 sudo sh -c 'echo -n > shared_config/block_ips.conf'
+
+```
 
 ## 📸 Hình ảnh Demo
 <img width="1613" height="545" alt="START" src="https://github.com/user-attachments/assets/0e488fc5-a659-4858-beb8-9cb1a7c6395b" />
