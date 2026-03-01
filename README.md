@@ -42,7 +42,7 @@ brute-force-defender/
 ## 🚀 Hướng dẫn Cài đặt & Sử dụng
 
 Dưới đây là các lệnh triển khai nhanh gọn nhất. Bạn chỉ cần chạy lần lượt:
-Bash
+
 1) git clone [https://github.com/Dungsocool/brute-force-defender.git](https://github.com/Dungsocool/brute-force-defender.git)
 2) cd brute-force-defender/
 3) nano .env  # (Ghi chú: Điền TELEGRAM_TOKEN và TELEGRAM_CHAT_ID của bạn vào đây)
@@ -51,7 +51,6 @@ Bash
 🧹 Dọn dẹp hệ thống (Reset)
 Để tắt hệ thống và xóa sạch danh sách IP đã bị chặn (chuẩn bị cho lần test tiếp theo), hãy chạy 2 lệnh sau:
 
-Bash
 sudo docker-compose down
 sudo sh -c 'echo -n > shared_config/block_ips.conf'
 
