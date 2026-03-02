@@ -83,4 +83,11 @@ Prompt tôi đã dùng:
 "Chặn được IP rồi nhưng Telegram vẫn im lặng. Hãy thêm debug log in ra Status Code và Response Body của Telegram API, đồng thời cấu hình network_mode: host để container thoát khỏi mạng ảo Docker."
 Cách xử lý: Sau khi đổi sang network_mode: host, hệ thống đã thông mạng hoàn toàn. Bài học: Mạng ảo Bridge của Docker đôi khi là rào cản cho các ứng dụng cần gọi API bên ngoài.
 
+Lỗi phân quyền khi kiểm tra mạng Docker
 
+Tình huống: Khi dùng lệnh ping để kiểm tra kết nối, hệ thống báo lỗi permission denied (are you root?) do Docker image của n8n bảo mật không cho user thường chạy lệnh mạng.
+
+Prompt điều khiển AI: "Tôi bị lỗi permission denied khi ping từ trong container n8n. Làm sao để chạy lệnh này dưới quyền root?"
+
+Kết quả: Nhờ AI, tôi đã biết cách dùng cờ -u root trong lệnh docker exec để bypass phân quyền và xác nhận mạng đã thông hoàn toàn sau khi đổi sang network_mode: host. Hệ thống Timer Monitoring qua Telegram đã hoạt động trơn tru 100%.
+<img width="1053" height="71" alt="image" src="https://github.com/user-attachments/assets/aa0dab56-e022-4c57-80e5-932e7eb019d7" />
